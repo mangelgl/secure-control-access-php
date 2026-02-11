@@ -1,0 +1,15 @@
+services:
+    web:
+        build: .
+        container_name: webserver
+        ports:
+            - '80:80'
+        volumes:
+            - './src:/var/www/html/'
+          networks:
+            - web_network
+            restart: always
+
+networks:
+    web_network:
+    driver: bridge
