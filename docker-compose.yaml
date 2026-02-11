@@ -3,13 +3,13 @@ services:
         build: .
         container_name: webserver
         ports:
-            - '80:80'
+            - '8080:80'
         volumes:
             - './src:/var/www/html/'
-          networks:
+        networks:
             - web_network
-            restart: always
+        restart: always
 
 networks:
     web_network:
-    driver: bridge
+        driver: bridge

@@ -1,6 +1,5 @@
 <?php
 
-require_once './config.php';
 $env = parse_ini_file(__DIR__ . '/.env');
 $errors = [];
 
