@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Si no hay errores, conecto a la base de datos
-    if (count($errors) == 0) {
+    if (empty($errors)) {
         $dsn = "mysql:dbname=" . $env["DB_DATABASE"] . ";host=" . $env["DB_HOST"] . ";port=" . $env["DB_PORT"];
         try {
             $conn = new PDO($dsn, $env["DB_USER"], $env["DB_PASSWORD"]);
@@ -59,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
