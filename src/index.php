@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Password -->
         <input type="password"
-            name="passw   ord"
+            name="password"
             placeholder="Introduzca su contraseña">
         <?php if (isset($errors["password"])): ?>
             <p><?= $errors["password"] ?></p>
