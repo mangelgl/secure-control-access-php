@@ -27,7 +27,12 @@ if (isset($_REQUEST["error"])) {
         <p class="error"><?= $errors["not_admin"] ?></p>
     <?php endif; ?>
     <p>Has iniciado sesión como <?= $_SESSION["email"] ?></p>
-    <a href="logout.php">Cerrar sesión</a>
+    <div>
+        <?php if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin"): ?>
+            <button><a href="admin.php">Administración</a></button>
+        <?php endif; ?>
+        <button><a href="logout.php">Cerrar sesión</a></button>
+    </div>
 </body>
 
 </html>

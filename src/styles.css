@@ -17,3 +17,8 @@ p.error {
   font-weight: bold;
   margin: 5px;
 }
+
+button a {
+  text-decoration: none;
+  color: black;
+}

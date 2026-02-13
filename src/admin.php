@@ -25,7 +25,7 @@ if (!isset($_SESSION["email"])) {
         <li>Información sensible 2</li>
         <li>Información sensible 3</li>
     </ul>
-    <a href="principal.php">Volver</a>
+    <button><a href="principal.php">Volver</a></button>
 </body>
 
 </html>
