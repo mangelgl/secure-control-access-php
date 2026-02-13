@@ -14,7 +14,7 @@ if (!isset($_SESSION["email"])) {
 <head>
     <meta charset="UTF-8">
     <title>Admin dashboard</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
