@@ -22,16 +22,24 @@ if (isset($_REQUEST["error"])) {
 </head>
 
 <body>
-    <h1>Bienvenido al área restringida</h1>
-    <?php if (isset($errors["not_admin"])): ?>
-        <p class="error"><?= $errors["not_admin"] ?></p>
-    <?php endif; ?>
-    <p>Has iniciado sesión como <?= $_SESSION["email"] ?></p>
-    <div>
-        <?php if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin"): ?>
-            <button><a href="admin.php">Administración</a></button>
+    <div class="dashboard-card">
+
+        <h1>Bienvenido al área restringida</h1>
+
+        <?php if (isset($errors["not_admin"])): ?>
+            <p class="error"><?= $errors["not_admin"] ?></p>
         <?php endif; ?>
-        <button><a href="logout.php">Cerrar sesión</a></button>
+
+        <p>Has iniciado sesión como: <br><strong><?= $_SESSION["email"] ?></strong></p>
+
+        <div style="margin-top: 30px;">
+            <?php if (isset($_SESSION["role"]) && $_SESSION["role"] === "admin"): ?>
+                <button><a href="admin.php">Administración</a></button>
+            <?php endif; ?>
+
+            <button><a href="logout.php">Cerrar sesión</a></button>
+        </div>
+
     </div>
 </body>
 

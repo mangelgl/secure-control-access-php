@@ -18,14 +18,18 @@ if (!isset($_SESSION["email"])) {
 </head>
 
 <body>
-    <h1>Dashboard de administrador</h1>
-    <p>Eres capaz de acceder a esta área restringida porque tienes el rol de administrador.</p>
-    <ul>
-        <li>Información sensible 1</li>
-        <li>Información sensible 2</li>
-        <li>Información sensible 3</li>
-    </ul>
-    <button><a href="principal.php">Volver</a></button>
+    <div class="dashboard-card">
+
+        <h1>Dashboard de administrador</h1>
+        <p>Eres capaz de acceder a esta área restringida porque tienes el rol de administrador.</p>
+        <ul>
+            <li>Información sensible 1</li>
+            <li>Información sensible 2</li>
+            <li>Información sensible 3</li>
+        </ul>
+        <button><a href="principal.php">Volver</a></button>
+
+    </div>
 </body>
 
 </html>

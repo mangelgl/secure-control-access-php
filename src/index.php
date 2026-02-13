@@ -68,32 +68,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-    <h1>Inicia sesión</h1>
-    <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
+    <div class="form-container">
+        <h1>Inicia sesión</h1>
+        <form action="<?= htmlspecialchars($_SERVER["PHP_SELF"]) ?>" method="POST">
 
-        <!-- Correo electrónico -->
-        <input type="text"
-            name="email"
-            placeholder="Introduzca su correo electrónico">
-        <?php if (isset($errors["email"])): ?>
-            <p class="error"><?= $errors["email"] ?></p>
-        <?php endif; ?>
+            <!-- Correo electrónico -->
+            <input type="text"
+                name="email"
+                placeholder="Introduzca su correo electrónico">
+            <?php if (isset($errors["email"])): ?>
+                <p class="error"><?= $errors["email"] ?></p>
+            <?php endif; ?>
 
-        <!-- Password -->
-        <input type="password"
-            name="password"
-            placeholder="Introduzca su contraseña">
-        <?php if (isset($errors["password"])): ?>
-            <p class="error"><?= $errors["password"] ?></p>
-        <?php endif; ?>
+            <!-- Password -->
+            <input type="password"
+                name="password"
+                placeholder="Introduzca su contraseña">
+            <?php if (isset($errors["password"])): ?>
+                <p class="error"><?= $errors["password"] ?></p>
+            <?php endif; ?>
 
-        <?php if (isset($errors["unauthorized"])): ?>
-            <p class="error"><?= $errors["unauthorized"] ?></p>
-        <?php endif; ?>
+            <?php if (isset($errors["unauthorized"])): ?>
+                <p class="error"><?= $errors["unauthorized"] ?></p>
+            <?php endif; ?>
 
-        <!-- Submit -->
-        <input type="submit" value="Iniciar sesión">
-    </form>
+            <!-- Submit -->
+            <input type="submit" value="Iniciar sesión">
+        </form>
+    </div>
 </body>
 
 </html>
