@@ -24,7 +24,7 @@ if (isset($_REQUEST["error"])) {
 <body>
     <h1>Bienvenido al área restringida</h1>
     <?php if (isset($errors["not_admin"])): ?>
-        <p><?= $errors["not_admin"] ?></p>
+        <p class="error"><?= $errors["not_admin"] ?></p>
     <?php endif; ?>
     <p>Has iniciado sesión como <?= $_SESSION["email"] ?></p>
     <a href="logout.php">Cerrar sesión</a>

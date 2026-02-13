@@ -76,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             name="email"
             placeholder="Introduzca su correo electrónico">
         <?php if (isset($errors["email"])): ?>
-            <p><?= $errors["email"] ?></p>
+            <p class="error"><?= $errors["email"] ?></p>
         <?php endif; ?>
 
         <!-- Password -->
@@ -84,11 +84,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             name="password"
             placeholder="Introduzca su contraseña">
         <?php if (isset($errors["password"])): ?>
-            <p><?= $errors["password"] ?></p>
+            <p class="error"><?= $errors["password"] ?></p>
         <?php endif; ?>
 
         <?php if (isset($errors["unauthorized"])): ?>
-            <p><?= $errors["unauthorized"] ?></p>
+            <p class="error"><?= $errors["unauthorized"] ?></p>
         <?php endif; ?>
 
         <!-- Submit -->
