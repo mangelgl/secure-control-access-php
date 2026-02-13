@@ -14,14 +14,7 @@ if (!isset($_SESSION["email"])) {
 <head>
     <meta charset="UTF-8">
     <title>Admin dashboard</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
