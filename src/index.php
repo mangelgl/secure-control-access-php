@@ -2,7 +2,9 @@
 
 $env = parse_ini_file(__DIR__ . '/.env');
 $errors = [];
+$login = false;
 
+// Si el usuario ha intentado acceder a una página sin iniciar sesión, muestro un error
 if (isset($_REQUEST["error"])) {
     $errors["unauthorized"] = "Debe iniciar sesión!";
 }
@@ -12,7 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"];
     $password = $_POST["password"];
 
-    // Validaciones
+    /* Validaciones:
+     * - El email debe ser un email válido
+     * - La contraseña debe tener al menos 8 caracteres
+     */
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors["email"] = "Email no válido";
     }
@@ -31,6 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             die();
         }
 
+        // Comprueba si el usuario existe en base de datos
         $sql = "SELECT * FROM users WHERE email = :email";
         $values = [":email" => $email];
 
@@ -38,22 +44,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $res = $conn->prepare($sql);
             $res->execute($values);
         } catch (Exception $e) {
-            echo $e;
+            $errors["user_query_check"] = "No se ha podido comprobar el usuario";
         }
 
         $user = $res->fetch(PDO::FETCH_ASSOC);
+        // Si el usuario no existe, muestro un error genérico para no dar pistas sobre qué ha fallado
         if (!is_array($user)) {
             $errors["login"] = "Usuario o contraseña incorrectos";
         } else {
+            // Si el usuario existe, compruebo la contraseña
             if (password_verify($password, $user["password"])) {
-                session_start();
-                $_SESSION["email"] = $user["email"];
-                $_SESSION["role"] = $user["role"];
-                header("Location: principal.php");
+                $login = true;
+
+                // Si el usuario existe y el algoritmo es antiguo, lo actualizo al nuevo algoritmo
+                if (password_needs_rehash($user["password"], $env["PASSWORD_ALGO"])) {
+                    $newHash = password_hash($password, $env["PASSWORD_ALGO"]);
+                    $sql = "UPDATE users SET password = :password WHERE email = :email";
+                    $values = [":password" => $newHash, ":email" => $email];
+                    try {
+                        $res = $conn->prepare($sql);
+                        $res->execute($values);
+                    } catch (Exception $e) {
+                        $errors["database_update"] = "No se ha podido actualizar la contraseña";
+                    }
+                }
             } else {
                 $errors["login"] = "Usuario o contraseña incorrectos";
             }
         }
+    }
+
+    // Si el login es correcto, inicio sesión y redirijo a la página principal
+    if ($login) {
+        session_start();
+        $_SESSION["email"] = $user["email"];
+        $_SESSION["role"] = $user["role"];
+        header("Location: principal.php");
     }
 }
 
@@ -88,6 +114,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <p class="error"><?= $errors["password"] ?></p>
             <?php endif; ?>
 
+            <!-- Errores de login -->
+            <?php if (isset($errors["database_conn"])): ?>
+                <p class="error"><?= $errors["database_conn"] ?></p>
+            <?php endif; ?>
+            <?php if (isset($errors["user_query_check"])): ?>
+                <p class="error"><?= $errors["user_query_check"] ?></p>
+            <?php endif; ?>
+            <?php if (isset($errors["login"])): ?>
+                <p class="error"><?= $errors["login"] ?></p>
+            <?php endif; ?>
+            <?php if (isset($errors["database_update"])): ?>
+                <p class="error"><?= $errors["database_update"] ?></p>
+            <?php endif; ?>
             <?php if (isset($errors["unauthorized"])): ?>
                 <p class="error"><?= $errors["unauthorized"] ?></p>
             <?php endif; ?>
