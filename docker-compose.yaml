@@ -3,7 +3,7 @@ services:
         build: .
         container_name: webserver
         ports:
-            - '8080:80'
+            - '80:80'
         volumes:
             - './src:/var/www/html/'
         networks:
