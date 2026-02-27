@@ -4,8 +4,9 @@ Un sistema de autenticación y control de acceso implementado en PHP, diseñado 
 
 ## ✨ Características Principales
 
-* **Gestión Segura de Cookies:** Configuración de cookies de sesión con la banderas `HttpOnly`.
+* **Gestión Segura de Cookies:** Configuración de cookies de sesión con las banderas `HttpOnly` y `SameSite`.
 * **Almacenamiento Seguro de Contraseñas:** Uso de los algoritmos nativos de PHP (`password_hash` y `password_verify`) utilizando Bcrypt.
+* **Gestión del tiempo de vida de las Cookies:** Cookies con un tiempo de vida máximo de 6 horas y 24 minutos de inactividad.
 * **Prevención de Inyección SQL:** Uso exclusivo de consultas preparadas a través de PDO.
 
 ## 🛠️ Requisitos del Sistema
