@@ -6,28 +6,21 @@ $login = false;
 
 // Si el usuario ha intentado acceder a una página sin iniciar sesión, muestro un error
 if (isset($_REQUEST["error"])) {
-    $errors["unauthorized"] = "Debe iniciar sesión!";
+    $errors["unauthorized"] = "¡Debe iniciar sesión!";
 }
 
 // Si llega una petición POST, recojo los valores
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+    $email = $_POST["email"] ?? '';
+    $password = $_POST["password"] ?? '';
 
-    /* Validaciones:
-     * - El email debe ser un email válido
-     * - La contraseña debe tener al menos 8 caracteres
-     */
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors["email"] = "Email no válido";
-    }
+    $camposFormulario = [
+        "email" => $email,
+        "password" => $password,
+    ];
 
-    if (strlen($password) < 8) {
-        $errors["password"] = "Contraseña no válida";
-    }
-
-    // Si no hay errores, conecto a la base de datos
-    if (empty($errors)) {
+    // Si no hay errores en las validaciones, conecto a la base de datos
+    if (validarCampos($camposFormulario, $errors)) {
         $dsn = "mysql:dbname=" . $env["DB_DATABASE"] . ";host=" . $env["DB_HOST"] . ";port=" . $env["DB_PORT"];
         try {
             $conn = new PDO($dsn, $env["DB_USER"], $env["DB_PASSWORD"]);
@@ -81,6 +74,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION["role"] = $user["role"];
         header("Location: principal.php");
     }
+}
+
+/* Validaciones:
+    * - El email debe ser un email válido
+    * - La contraseña debe tener al menos 8 caracteres
+*/
+function validarCampos($campos, &$errors)
+{
+    // Email
+    if (empty($campos["email"]) || !filter_var($campos["email"], FILTER_VALIDATE_EMAIL)) {
+        $errors["email"] = "Email no válido";
+    }
+
+    // Password
+    if (empty($campos["password"]) || strlen($campos["password"]) < 8) {
+        $errors["password"] = "Contraseña no válida (mínimo 8 caracteres)";
+    }
+
+    // Si el array de errores está vacío, la validación es correcta (true)
+    return empty($errors);
 }
 
 ?>
