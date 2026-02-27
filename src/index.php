@@ -26,11 +26,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $conn = new PDO($dsn, $env["DB_USER"], $env["DB_PASSWORD"]);
         } catch (Exception $e) {
             $errors["database_conn"] = "Servicio no disponible";
-            die();
         }
 
         // Comprueba si el usuario existe en base de datos
-        $sql = "SELECT * FROM users WHERE email = :email";
+        $sql = "SELECT user, email, role FROM users WHERE email = :email";
         $values = [":email" => $email];
 
         try {
