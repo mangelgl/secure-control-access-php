@@ -69,9 +69,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Si el login es correcto, inicio sesión y redirijo a la página principal
     if ($login) {
         session_start();
+        // Regenera el id de sesión para evitar ataques de "fijación de sesión"
+        session_regenerate_id(true);
         $_SESSION["email"] = $user["email"];
         $_SESSION["role"] = $user["role"];
         header("Location: principal.php");
+        exit();
     }
 }
 
