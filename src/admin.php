@@ -1,10 +1,16 @@
 <?php
-session_start();
+
+require_once __DIR__ . '/utils.php';
+
+use TiposCampos;
+
 if (!isset($_SESSION["email"])) {
-    header("Location: index.php?error=login");
+    addFlashMessage(TiposCampos::GENERIC, $env["UNAUTHORIZED_ACCESS_ERROR"]);
+    header("Location: index.php");
     exit();
 } elseif (!isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
-    header("Location: principal.php?error=not_admin");
+    addFlashMessage(TiposCampos::GENERIC, $env["NOT_ADMIN_ERROR"]);
+    header("Location: principal.php");
     exit();
 }
 ?>

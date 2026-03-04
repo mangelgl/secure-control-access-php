@@ -1,18 +1,19 @@
 <?php
 
-$env = parse_ini_file(__DIR__ . '/.env');
-$errors = [];
-$login = false;
+require_once __DIR__ . '/utils.php';
 
-// Si el usuario ha intentado acceder a una página sin iniciar sesión, muestro un error
-if (isset($_REQUEST["error"])) {
-    $errors["unauthorized"] = "¡Debe iniciar sesión!";
-}
+use TiposCampos;
+
+$error = getFlashMessage();
+$errorEmail    = $error[TiposCampos::EMAIL->value]['message'] ?? null;
+$errorPassword = $error[TiposCampos::PASSWORD->value]['message'] ?? null;
+$errorGeneric  = $error[TiposCampos::GENERIC->value]['message'] ?? null;
 
 // Si llega una petición POST, recojo los valores
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST["email"] ?? '';
     $password = $_POST["password"] ?? '';
+    $login = false;
 
     $camposFormulario = [
         "email" => $email,
@@ -20,12 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ];
 
     // Si no hay errores en las validaciones, conecto a la base de datos
-    if (validarCampos($camposFormulario, $errors)) {
+    if (validarCampos($camposFormulario, $env)) {
         $dsn = "mysql:dbname=" . $env["DB_DATABASE"] . ";host=" . $env["DB_HOST"] . ";port=" . $env["DB_PORT"];
         try {
             $conn = new PDO($dsn, $env["DB_USER"], $env["DB_PASSWORD"]);
         } catch (Exception $e) {
-            $errors["database_conn"] = "Servicio no disponible";
+            addFlashMessage(TiposCampos::GENERIC, $env["UNEXPECTED_ERROR"]);
         }
 
         // Comprueba si el usuario existe en base de datos
@@ -36,13 +37,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $res = $conn->prepare($sql);
             $res->execute($values);
         } catch (Exception $e) {
-            $errors["user_query_check"] = "No se ha podido comprobar el usuario";
+            addFlashMessage(TiposCampos::GENERIC, $env["UNEXPECTED_ERROR"]);
         }
 
         $user = $res->fetch(PDO::FETCH_ASSOC);
         // Si el usuario no existe, muestro un error genérico para no dar pistas sobre qué ha fallado
         if (!is_array($user)) {
-            $errors["login"] = "Usuario o contraseña incorrectos";
+            addFlashMessage(TiposCampos::GENERIC, $env["LOGIN_FAILED_ERROR"]);
         } else {
             // Si el usuario existe, compruebo la contraseña
             if (password_verify($password, $user["password"])) {
@@ -57,11 +58,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $res = $conn->prepare($sql);
                         $res->execute($values);
                     } catch (Exception $e) {
-                        $errors["database_update"] = "No se ha podido actualizar la contraseña";
+                        addFlashMessage(TiposCampos::GENERIC, $env["UPDATE_ALGORITHM_PASSWORD_ERROR"]);
                     }
                 }
             } else {
-                $errors["login"] = "Usuario o contraseña incorrectos";
+                addFlashMessage(TiposCampos::GENERIC, $env["LOGIN_FAILED_ERROR"]);
             }
         }
     }
@@ -82,20 +83,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     * - El email debe ser un email válido
     * - La contraseña debe tener al menos 8 caracteres
 */
-function validarCampos($campos, &$errors)
+function validarCampos($campos, &$env)
 {
+    $error = false;
     // Email
     if (empty($campos["email"]) || !filter_var($campos["email"], FILTER_VALIDATE_EMAIL)) {
-        $errors["email"] = "Email no válido";
+        addFlashMessage(TiposCampos::EMAIL, $env["EMAIL_INVALID_ERROR"]);
+        $error = true;
     }
 
     // Password
     if (empty($campos["password"]) || strlen($campos["password"]) < 8) {
-        $errors["password"] = "Contraseña no válida (mínimo 8 caracteres)";
+        addFlashMessage(TiposCampos::PASSWORD, $env["PASSWORD_INVALID_ERROR"]);
+        $error = true;
     }
 
     // Si el array de errores está vacío, la validación es correcta (true)
-    return empty($errors);
+    return !$error;
 }
 
 ?>
@@ -117,33 +121,21 @@ function validarCampos($campos, &$errors)
             <input type="text"
                 name="email"
                 placeholder="Introduzca su correo electrónico">
-            <?php if (isset($errors["email"])): ?>
-                <p class="error"><?= $errors["email"] ?></p>
+            <?php if ($errorEmail): ?>
+                <p class="error"><?= $errorEmail ?></p>
             <?php endif; ?>
 
             <!-- Password -->
             <input type="password"
                 name="password"
                 placeholder="Introduzca su contraseña">
-            <?php if (isset($errors["password"])): ?>
-                <p class="error"><?= $errors["password"] ?></p>
+            <?php if ($errorPassword): ?>
+                <p class="error"><?= $errorPassword ?></p>
             <?php endif; ?>
 
             <!-- Errores de login -->
-            <?php if (isset($errors["database_conn"])): ?>
-                <p class="error"><?= $errors["database_conn"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["user_query_check"])): ?>
-                <p class="error"><?= $errors["user_query_check"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["login"])): ?>
-                <p class="error"><?= $errors["login"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["database_update"])): ?>
-                <p class="error"><?= $errors["database_update"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["unauthorized"])): ?>
-                <p class="error"><?= $errors["unauthorized"] ?></p>
+            <?php if ($errorGeneric): ?>
+                <p class="error"><?= $errorGeneric ?></p>
             <?php endif; ?>
 
             <!-- Submit -->

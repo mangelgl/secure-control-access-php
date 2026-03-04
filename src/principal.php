@@ -1,14 +1,14 @@
 <?php
-session_start();
-$errors = [];
+require_once __DIR__ . '/utils.php';
+
+use TiposCampos;
+
+$error = getFlashMessage();
 
 if (!isset($_SESSION["email"])) {
-    header("Location: index.php?error=login");
+    addFlashMessage(TiposCampos::GENERIC, $env["UNAUTHORIZED_ACCESS_ERROR"]);
+    header("Location: index.php");
     exit();
-}
-
-if (isset($_REQUEST["error"])) {
-    $errors["not_admin"] = "No tienes permisos para acceder a esta área!";
 }
 
 ?>
@@ -26,8 +26,8 @@ if (isset($_REQUEST["error"])) {
 
         <h1>Bienvenido al área restringida</h1>
 
-        <?php if (isset($errors["not_admin"])): ?>
-            <p class="error"><?= $errors["not_admin"] ?></p>
+        <?php if (isset($error[TiposCampos::GENERIC->value])): ?>
+            <p class="error"><?= $error[TiposCampos::GENERIC->value]["message"] ?></p>
         <?php endif; ?>
 
         <p>Has iniciado sesión como: <br><strong><?= $_SESSION["email"] ?></strong></p>

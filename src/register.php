@@ -1,8 +1,16 @@
 <?php
 
+require_once __DIR__ . '/utils.php';
+
+use TiposCampos;
+
+$error = getFlashMessage();
+$errorEmail    = $error[TiposCampos::EMAIL->value]['message'] ?? null;
+$errorPassword = $error[TiposCampos::PASSWORD->value]['message'] ?? null;
+$errorConfirmPassword = $error[TiposCampos::CONFIRM_PASSWORD->value]['message'] ?? null;
+$errorGeneric  = $error[TiposCampos::GENERIC->value]['message'] ?? null;
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $env = parse_ini_file(__DIR__ . '/.env');
-    $errors = [];
     $registro = false;
     // Recoger datos del formulario
     $campos = [
@@ -13,12 +21,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Validar campos
     $errors = [];
-    if (validarCampos($campos, $errors)) {
+    if (validarCampos($campos, $env)) {
         $dsn = "mysql:dbname=" . $env["DB_DATABASE"] . ";host=" . $env["DB_HOST"] . ";port=" . $env["DB_PORT"];
         try {
             $conn = new PDO($dsn, $env["DB_USER"], $env["DB_PASSWORD"]);
         } catch (Exception $e) {
-            $errors["database_conn"] = "Servicio no disponible";
+            addFlashMessage(TiposCampos::GENERIC, $env["UNEXPECTED_ERROR"]);
         }
 
         // Comprueba si el usuario existe en base de datos
@@ -29,13 +37,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $res = $conn->prepare($sql);
             $res->execute($values);
         } catch (Exception $e) {
-            $errors["user_query_check"] = "No se ha podido comprobar el usuario";
+            addFlashMessage(TiposCampos::GENERIC, $env["UNEXPECTED_ERROR"]);
         }
 
         $user = $res->fetch(PDO::FETCH_ASSOC);
         // Si el usuario ya existe, muestro un error genérico para no dar pistas sobre qué ha fallado
         if (is_array($user)) {
-            $errors["user_already_exists"] = "El usuario ya existe";
+            addFlashMessage(TiposCampos::GENERIC, $env["EMAIL_ALREADY_EXIST_ERROR"]);
         } else {
             // Si el usuario no existe, lo creo
             $passwordHash = password_hash($campos["password"], $env["PASSWORD_ALGO"]);
@@ -46,7 +54,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $res->execute($values);
                 $registro = true;
             } catch (Exception $e) {
-                $errors["database_insert"] = "No se ha podido registrar el usuario";
+                addFlashMessage(TiposCampos::GENERIC, $env["DATABASE_INSERT_ERROR"]);
             }
         }
     }
@@ -58,24 +66,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-function validarCampos($campos, &$errors)
+function validarCampos($campos, &$env)
 {
+    $error = false;
     // Email
     if (empty($campos["email"]) || !filter_var($campos["email"], FILTER_VALIDATE_EMAIL)) {
-        $errors["email"] = "Email no válido";
+        addFlashMessage(TiposCampos::EMAIL, $env["EMAIL_INVALID_ERROR"]);
+        $error = true;
     }
 
     // Password
     if (empty($campos["password"]) || strlen($campos["password"]) < 8) {
-        $errors["password"] = "Contraseña no válida (mínimo 8 caracteres)";
+        addFlashMessage(TiposCampos::PASSWORD, $env["PASSWORD_INVALID_ERROR"]);
+        $error = true;
     }
 
     if (empty($campos["confirm_password"]) || $campos["password"] !== $campos["confirm_password"]) {
-        $errors["confirm_password"] = "Las contraseñas no coinciden";
+        addFlashMessage(TiposCampos::CONFIRM_PASSWORD, $env["CONFIRM_PASSWORD_ERROR"]);
+        $error = true;
     }
 
-    // Si el array de errores está vacío, la validación es correcta (true)
-    return empty($errors);
+    return !$error;
 }
 
 ?>
@@ -97,38 +108,29 @@ function validarCampos($campos, &$errors)
             <input type="text"
                 name="email"
                 placeholder="Introduzca su correo electrónico">
-            <?php if (isset($errors["email"])): ?>
-                <p class="error"><?= $errors["email"] ?></p>
+            <?php if ($errorEmail): ?>
+                <p class="error"><?= $errorEmail ?></p>
             <?php endif; ?>
 
             <!-- Password -->
             <input type="password"
                 name="password"
                 placeholder="Introduzca su contraseña">
-            <?php if (isset($errors["password"])): ?>
-                <p class="error"><?= $errors["password"] ?></p>
+            <?php if ($errorPassword): ?>
+                <p class="error"><?= $errorPassword ?></p>
             <?php endif; ?>
 
             <!-- Confirm Password -->
             <input type="password"
                 name="confirm_password"
                 placeholder="Confirme su contraseña">
-            <?php if (isset($errors["confirm_password"])): ?>
-                <p class="error"><?= $errors["confirm_password"] ?></p>
+            <?php if ($errorConfirmPassword): ?>
+                <p class="error"><?= $errorConfirmPassword ?></p>
             <?php endif; ?>
 
             <!-- Errores de registro -->
-            <?php if (isset($errors["database_conn"])): ?>
-                <p class="error"><?= $errors["database_conn"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["user_query_check"])): ?>
-                <p class="error"><?= $errors["user_query_check"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["user_already_exists"])): ?>
-                <p class="error"><?= $errors["user_already_exists"] ?></p>
-            <?php endif; ?>
-            <?php if (isset($errors["database_insert"])): ?>
-                <p class="error"><?= $errors["database_insert"] ?></p>
+            <?php if ($errorGeneric): ?>
+                <p class="error"><?= $errorGeneric ?></p>
             <?php endif; ?>
 
             <!-- Submit -->
