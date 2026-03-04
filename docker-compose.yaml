@@ -9,14 +9,15 @@ services:
         restart: unless-stopped
 
     nginx-proxy:
-        image: nginx:alpine
+        image: owasp/modsecurity-crs:4.24.0-nginx-202603010803
         container_name: nginx-proxy
-        depends_on:
-            - web
+        user: root
+        environment:
+            - BACKEND=http://web:80
         ports:
             - '80:80'
         volumes:
-            - ./config/nginx-proxy/conf.d:/etc/nginx/conf.d:ro
+            - ./config/nginx-proxy/conf.d:/etc/nginx/templates/conf.d:ro
             - nginx-proxy-logs:/var/log/nginx
         networks:
             - web_network
