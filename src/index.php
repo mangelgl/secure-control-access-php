@@ -29,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Comprueba si el usuario existe en base de datos
-        $sql = "SELECT user, email, role FROM users WHERE email = :email";
+        $sql = "SELECT email, password, role FROM users WHERE email = :email";
         $values = [":email" => $email];
 
         try {
