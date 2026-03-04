@@ -1,14 +1,29 @@
 services:
     web:
         build: .
-        container_name: webserver
-        ports:
-            - '80:80'
+        container_name: webserver        
         volumes:
             - './src:/var/www/html/'
         networks:
             - web_network
-        restart: always
+        restart: unless-stopped
+
+    nginx-proxy:
+        image: nginx:alpine
+        container_name: nginx-proxy
+        depends_on:
+            - web
+        ports:
+            - '80:80'
+        volumes:
+            - ./config/nginx-proxy/conf.d:/etc/nginx/conf.d:ro
+            - nginx-proxy-logs:/var/log/nginx
+        networks:
+            - web_network
+        restart: unless-stopped
+
+volumes:
+    nginx-proxy-logs:
 
 networks:
     web_network:
