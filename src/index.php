@@ -148,6 +148,7 @@ function validarCampos($campos, &$errors)
 
             <!-- Submit -->
             <input type="submit" value="Iniciar sesión">
+            <p>¿No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>
         </form>
     </div>
 </body>

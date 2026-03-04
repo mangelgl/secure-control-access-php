@@ -116,3 +116,8 @@ li {
   font-size: 0.9rem;
   margin-bottom: 15px;
 }
+
+a[href="register.php"] {
+  color: white;
+  font-size: 0.9rem;
+}
