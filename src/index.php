@@ -118,7 +118,7 @@ function validarCampos($campos, &$errors)
                 name="email"
                 placeholder="Introduzca su correo electrónico">
             <?php if (isset($errors["email"])): ?>
-                <p class="error"><?= $errors["email"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["email"]) ?></p>
             <?php endif; ?>
 
             <!-- Password -->
@@ -126,24 +126,24 @@ function validarCampos($campos, &$errors)
                 name="password"
                 placeholder="Introduzca su contraseña">
             <?php if (isset($errors["password"])): ?>
-                <p class="error"><?= $errors["password"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["password"]) ?></p>
             <?php endif; ?>
 
             <!-- Errores de login -->
             <?php if (isset($errors["database_conn"])): ?>
-                <p class="error"><?= $errors["database_conn"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["database_conn"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["user_query_check"])): ?>
-                <p class="error"><?= $errors["user_query_check"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["user_query_check"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["login"])): ?>
-                <p class="error"><?= $errors["login"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["login"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["database_update"])): ?>
-                <p class="error"><?= $errors["database_update"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["database_update"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["unauthorized"])): ?>
-                <p class="error"><?= $errors["unauthorized"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["unauthorized"]) ?></p>
             <?php endif; ?>
 
             <!-- Submit -->

@@ -98,7 +98,7 @@ function validarCampos($campos, &$errors)
                 name="email"
                 placeholder="Introduzca su correo electrónico">
             <?php if (isset($errors["email"])): ?>
-                <p class="error"><?= $errors["email"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["email"]) ?></p>
             <?php endif; ?>
 
             <!-- Password -->
@@ -106,7 +106,7 @@ function validarCampos($campos, &$errors)
                 name="password"
                 placeholder="Introduzca su contraseña">
             <?php if (isset($errors["password"])): ?>
-                <p class="error"><?= $errors["password"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["password"]) ?></p>
             <?php endif; ?>
 
             <!-- Confirm Password -->
@@ -114,21 +114,21 @@ function validarCampos($campos, &$errors)
                 name="confirm_password"
                 placeholder="Confirme su contraseña">
             <?php if (isset($errors["confirm_password"])): ?>
-                <p class="error"><?= $errors["confirm_password"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["confirm_password"]) ?></p>
             <?php endif; ?>
 
             <!-- Errores de registro -->
             <?php if (isset($errors["database_conn"])): ?>
-                <p class="error"><?= $errors["database_conn"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["database_conn"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["user_query_check"])): ?>
-                <p class="error"><?= $errors["user_query_check"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["user_query_check"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["user_already_exists"])): ?>
-                <p class="error"><?= $errors["user_already_exists"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["user_already_exists"]) ?></p>
             <?php endif; ?>
             <?php if (isset($errors["database_insert"])): ?>
-                <p class="error"><?= $errors["database_insert"] ?></p>
+                <p class="error"><?= htmlspecialchars($errors["database_insert"]) ?></p>
             <?php endif; ?>
 
             <!-- Submit -->
