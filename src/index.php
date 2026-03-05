@@ -11,8 +11,8 @@ if (isset($_REQUEST["error"])) {
 
 // Si llega una petición POST, recojo los valores
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST["email"] ?? '';
-    $password = $_POST["password"] ?? '';
+    $email = htmlspecialchars($_POST["email"]) ?? '';
+    $password = htmlspecialchars($_POST["password"]) ?? '';
 
     $camposFormulario = [
         "email" => $email,

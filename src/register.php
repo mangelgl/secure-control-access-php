@@ -6,9 +6,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $registro = false;
     // Recoger datos del formulario
     $campos = [
-        "email" => trim($_POST["email"] ?? ""),
-        "password" => $_POST["password"] ?? "",
-        "confirm_password" => $_POST["confirm_password"] ?? "",
+        "email" => htmlspecialchars(trim($_POST["email"])) ?? "",
+        "password" => htmlspecialchars($_POST["password"]) ?? "",
+        "confirm_password" => htmlspecialchars($_POST["confirm_password"]) ?? "",
     ];
 
     // Validar campos
