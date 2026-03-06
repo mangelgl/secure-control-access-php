@@ -14,6 +14,7 @@ services:
         user: root
         environment:
             - BACKEND=http://web:80
+            - MODSEC_AUDIT_LOG=/var/log/nginx/modsec_audit.log
         ports:
             - "80:80"
         volumes:
